@@ -1,0 +1,31 @@
+# Pomodoro - Requirements Description Document
+
+Pomodoro is a simple GUI application for linux to apply the Pomodor technique.
+
+## Requirements
+
+* It has two windows.
+* In the main window is a countdown clock with minutes and seconds, and 4 buttons:
+  * Start work time
+  * Suspend
+  * Start break time
+  * Configuration
+
+When "Start work time" button is pressed a 20 minutes countdown starts. When the countdown reaches 0, the windows should show up in front of other windows with the message: "Start a break cycle". It automatically starts a break time.
+
+When "Start breck time" button is pressed a 5 minutes countdown starts. When the countdown reaches 0, the windows should show up in front of other windows with the message: "Continues working". It automatically starts a work time.
+
+# Configuration
+
+* The configuration window has 4 fields:
+  * Work time in minutes
+  * Short break time in minutes
+  * Long break time in minutes
+  * Number of short breaks before a long break
+
+# Implementation
+
+Technology stack:
+
+* Language: GO
+* GUI: Fyne
