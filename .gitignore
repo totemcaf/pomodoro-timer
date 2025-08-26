@@ -96,9 +96,6 @@ secrets.json
 .local/
 local/
 
-# Docker
-.dockerignore
-Dockerfile.local
 
 # Makefile generated files
 *.d
@@ -127,16 +124,6 @@ core.*
 *.swp
 *.swo
 *~
-
-# Emacs
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
 
 # Tags
 TAGS
