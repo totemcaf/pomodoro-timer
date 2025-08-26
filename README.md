@@ -5,7 +5,7 @@
 </style>
 
 <div style="text-align: center;">
-  <img src="./assets/pomodoro-timer.svg" class="small-svg" alt="Pomodoro Timer">
+  <img src="src/assets/pomodoro-timer.svg" class="small-svg" alt="Pomodoro Timer">
 </div>
 
 A simple and elegant GUI Pomodoro Timer application for Linux built with Go and Fyne.

@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 )
 
-//go:embed pomodoro-timer.svg
+//go:embed assets/pomodoro-timer.svg
 var iconSVGData []byte
 
 // GetAppIcon returns the embedded app icon as a Fyne resource

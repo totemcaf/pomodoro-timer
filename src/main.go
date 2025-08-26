@@ -168,12 +168,10 @@ func (p *PomodoroApp) createMainWindow() {
 	buttonContainer := container.NewVBox(
 		container.NewGridWithColumns(2,
 			p.startWorkBtn,
-			p.suspendBtn,
-		),
-		container.NewGridWithColumns(3,
+			p.aboutBtn,
 			p.startBreakBtn,
 			p.configBtn,
-			p.aboutBtn,
+			p.suspendBtn,
 		),
 	)
 

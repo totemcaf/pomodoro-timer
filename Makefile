@@ -127,7 +127,7 @@ install-user: build ## Install application with desktop integration for current 
 	cp $(BINARY) ~/.local/bin/
 	# Install icon
 	mkdir -p ~/.local/share/icons/hicolor/scalable/apps
-	cp assets/pomodoro-timer.svg ~/.local/share/icons/hicolor/scalable/apps/
+	cp src/assets/pomodoro-timer.svg ~/.local/share/icons/hicolor/scalable/apps/
 	# Install desktop entry
 	mkdir -p ~/.local/share/applications
 	@echo "[Desktop Entry]" > ~/.local/share/applications/pomodoro-timer.desktop
@@ -155,7 +155,7 @@ install-system: build ## Install application with desktop integration system-wid
 	sudo cp $(BINARY) /usr/local/bin/
 	# Install icon
 	sudo mkdir -p /usr/share/icons/hicolor/scalable/apps
-	sudo cp assets/pomodoro-timer.svg /usr/share/icons/hicolor/scalable/apps/
+	sudo cp src/assets/pomodoro-timer.svg /usr/share/icons/hicolor/scalable/apps/
 	# Install desktop entry
 	sudo mkdir -p /usr/share/applications
 	@echo "[Desktop Entry]" | sudo tee /usr/share/applications/pomodoro-timer.desktop > /dev/null

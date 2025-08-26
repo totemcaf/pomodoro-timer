@@ -11,7 +11,7 @@ import (
 
 const (
 	AppVersion     = "1.0.0"
-	AppAuthor      = "Charly Fau + AI"
+	AppAuthor      = "Charly Fau"
 	AppEmail       = "totemcaf@gmail.com"
 	AppWebsite     = "https://github.com/totemcaf"
 	AppLicense     = "Open Source"
