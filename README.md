@@ -20,6 +20,72 @@ A simple and elegant GUI Pomodoro Timer application for Linux built with Go and 
 - Linux operating system
 - GUI environment (X11/Wayland)
 
+## Runtime Dependencies
+
+### ✅ **Go Dependencies (Compiled In)**
+The binary **does NOT** have external Go runtime dependencies because:
+- All Go dependencies are **statically compiled** into the binary
+- The go.mod shows dependencies like Fyne, OpenGL bindings, etc., but these are embedded during compilation
+- Go produces self-contained executables by default
+
+### ⚠️ **System Library Dependencies (Required at Runtime)**
+However, the binary **DOES** require these system libraries to be present on the target system:
+
+#### **Essential System Dependencies:**
+1. **OpenGL Libraries**
+   - `libGL.so.1` (OpenGL runtime)
+   - `libGLX.so.0` (GLX extension)
+
+2. **X11/Wayland Display System**
+   - `libX11.so.6` (X11 client library)
+   - `libXrandr.so.2` (X11 RandR extension)
+   - `libXi.so.6` (X11 Input extension)
+   - `libXxf86vm.so.1` (X11 XF86VidMode extension)
+   - OR Wayland libraries if running on Wayland
+
+3. **Core System Libraries**
+   - `libc.so.6` (Standard C library)
+   - `libm.so.6` (Math library)
+   - `libpthread.so.0` (POSIX threads)
+
+#### **Graphics Driver Dependencies:**
+- **Mesa drivers** (for software/hardware OpenGL)
+- **GPU vendor drivers** (NVIDIA, AMD, Intel)
+
+### 📦 **Distribution Considerations**
+
+#### **Most Linux Systems Have These By Default:**
+- Desktop Linux distributions (Ubuntu, Fedora, etc.) include these libraries
+- Server distributions may need additional packages
+
+#### **Required Packages for End Users:**
+```bash
+# Ubuntu/Debian
+sudo apt-get install libgl1-mesa-glx libxrandr2 libxi6 libxxf86vm1
+
+# Fedora/RHEL
+sudo dnf install mesa-libGL libXrandr libXi libXxf86vm
+
+# Arch Linux
+sudo pacman -S mesa libxrandr libxi libxxf86vm
+```
+
+### 🎯 **Summary**
+
+**The binary is NOT completely dependency-free**, but it's **practically portable** because:
+
+✅ **Advantages:**
+- No Go runtime or application-specific dependencies
+- Single executable file
+- Works on any Linux system with GUI support
+
+⚠️ **Requirements:**
+- Target system must have GUI environment (X11/Wayland)
+- OpenGL support (hardware or software)
+- Standard system libraries (usually present)
+
+**For distribution:** The binary will run on 99% of desktop Linux systems without additional installation, but server or minimal systems may need graphics libraries installed.
+
 ## Installation
 
 ### Using Make (Recommended)
