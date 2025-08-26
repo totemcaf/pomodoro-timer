@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
@@ -40,10 +41,12 @@ func (p *PomodoroApp) createAboutWindow() {
 		p.aboutWindow.Hide()
 	})
 
-	// Create app icon (placeholder - you can add actual icon later)
-	iconLabel := widget.NewLabel("🍅")
-	iconLabel.TextStyle = fyne.TextStyle{Bold: true}
-	iconLabel.Alignment = fyne.TextAlignCenter
+	// Create app icon using the embedded SVG resource
+	iconResource := GetAppIcon()
+	iconImage := canvas.NewImageFromResource(iconResource)
+	iconImage.FillMode = canvas.ImageFillContain
+	iconImage.SetMinSize(fyne.NewSize(64, 64))
+	iconWidget := iconImage
 
 	// App name and version
 	titleLabel := widget.NewLabel("Pomodoro Timer")
@@ -100,7 +103,7 @@ func (p *PomodoroApp) createAboutWindow() {
 
 	// Create sections
 	headerSection := container.NewVBox(
-		iconLabel,
+		container.NewCenter(iconWidget),
 		titleLabel,
 		versionLabel,
 		widget.NewSeparator(),

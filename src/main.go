@@ -120,6 +120,9 @@ type PomodoroApp struct {
 func NewPomodoroApp() *PomodoroApp {
 	myApp := app.New()
 
+	// Set application icon
+	myApp.SetIcon(GetAppIcon())
+
 	return &PomodoroApp{
 		app:                   myApp,
 		workTime:              20 * time.Minute, // Default 20 minutes

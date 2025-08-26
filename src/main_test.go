@@ -66,30 +66,30 @@ func TestAboutWindowConstants(t *testing.T) {
 	if AppVersion == "" {
 		t.Error("AppVersion should not be empty")
 	}
-	
+
 	if AppAuthor == "" {
 		t.Error("AppAuthor should not be empty")
 	}
-	
+
 	if AppEmail == "" {
 		t.Error("AppEmail should not be empty")
 	}
-	
+
 	if AppWebsite == "" {
 		t.Error("AppWebsite should not be empty")
 	}
-	
+
 	if AppLicense == "" {
 		t.Error("AppLicense should not be empty")
 	}
-	
+
 	// Test specific values
 	expectedVersion := "1.0.0"
 	if AppVersion != expectedVersion {
 		t.Errorf("Expected version %s, got %s", expectedVersion, AppVersion)
 	}
-	
-	expectedAuthor := "Charly Fau + AI"
+
+	expectedAuthor := "Charly Fau"
 	if AppAuthor != expectedAuthor {
 		t.Errorf("Expected author %s, got %s", expectedAuthor, AppAuthor)
 	}
@@ -98,7 +98,7 @@ func TestAboutWindowConstants(t *testing.T) {
 func BenchmarkFormatTime(b *testing.B) {
 	app := NewPomodoroApp()
 	duration := 25*time.Minute + 30*time.Second
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		app.formatTime(duration)

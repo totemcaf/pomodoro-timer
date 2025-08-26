@@ -76,6 +76,10 @@ debug
 pomodoro
 pomodoro.exe
 
+# Copied resources (keep originals in assets/)
+src/*.svg
+src/*.png
+
 # Backup files
 *.bak
 *.backup
