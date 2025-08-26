@@ -113,27 +113,87 @@ install: build ## Install the application to GOPATH/bin
 	$(GO_CMD) install ./$(SRC_DIR)/...
 	@echo "✓ Application installed"
 
-.PHONY: install-system
-install-system: build ## Install system-wide with desktop integration (requires sudo)
-	./install.sh install-system
-
-.PHONY: install-user
-install-user: build ## Install for current user with desktop integration
-	./install.sh install-user
-
-.PHONY: uninstall-system
-uninstall-system: ## Remove system-wide installation
-	./install.sh uninstall-system
-
-.PHONY: uninstall-user
-uninstall-user: ## Remove user installation
-	./install.sh uninstall-user
-
 .PHONY: install-deps
 install-deps: ## Install development dependencies
 	$(GO_GET) -u golang.org/x/tools/cmd/goimports
 	$(GO_GET) -u github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	@echo "✓ Development dependencies installed"
+
+.PHONY: install-user
+install-user: build ## Install application with desktop integration for current user
+	@echo "Installing Pomodoro Timer for current user..."
+	# Install binary
+	mkdir -p ~/.local/bin
+	cp $(BINARY) ~/.local/bin/
+	# Install icon
+	mkdir -p ~/.local/share/icons/hicolor/scalable/apps
+	cp assets/pomodoro-timer.svg ~/.local/share/icons/hicolor/scalable/apps/
+	# Install desktop entry
+	mkdir -p ~/.local/share/applications
+	@echo "[Desktop Entry]" > ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Version=1.0" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Type=Application" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Name=Pomodoro Timer" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Comment=A simple and elegant Pomodoro Timer for productivity" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Exec=$(HOME)/.local/bin/$(APP_NAME)" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Icon=pomodoro-timer" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Terminal=false" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Categories=Office;Productivity;Utility;" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "Keywords=pomodoro;timer;productivity;focus;" >> ~/.local/share/applications/pomodoro-timer.desktop
+	@echo "StartupNotify=true" >> ~/.local/share/applications/pomodoro-timer.desktop
+	# Update desktop database
+	@which update-desktop-database > /dev/null 2>&1 && update-desktop-database ~/.local/share/applications || true
+	@which gtk-update-icon-cache > /dev/null 2>&1 && gtk-update-icon-cache ~/.local/share/icons/hicolor || true
+	@echo "✓ Pomodoro Timer installed for current user"
+	@echo "  Application will appear in Applications menu under Office/Productivity"
+
+.PHONY: install-system
+install-system: build ## Install application with desktop integration system-wide (requires sudo)
+	@echo "Installing Pomodoro Timer system-wide..."
+	# Install binary
+	sudo mkdir -p /usr/local/bin
+	sudo cp $(BINARY) /usr/local/bin/
+	# Install icon
+	sudo mkdir -p /usr/share/icons/hicolor/scalable/apps
+	sudo cp assets/pomodoro-timer.svg /usr/share/icons/hicolor/scalable/apps/
+	# Install desktop entry
+	sudo mkdir -p /usr/share/applications
+	@echo "[Desktop Entry]" | sudo tee /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Version=1.0" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Type=Application" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Name=Pomodoro Timer" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Comment=A simple and elegant Pomodoro Timer for productivity" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Exec=/usr/local/bin/$(APP_NAME)" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Icon=pomodoro-timer" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Terminal=false" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Categories=Office;Productivity;Utility;" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "Keywords=pomodoro;timer;productivity;focus;" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	@echo "StartupNotify=true" | sudo tee -a /usr/share/applications/pomodoro-timer.desktop > /dev/null
+	# Update desktop database
+	@which update-desktop-database > /dev/null 2>&1 && sudo update-desktop-database /usr/share/applications || true
+	@which gtk-update-icon-cache > /dev/null 2>&1 && sudo gtk-update-icon-cache /usr/share/icons/hicolor || true
+	@echo "✓ Pomodoro Timer installed system-wide"
+	@echo "  Application will appear in Applications menu under Office/Productivity"
+
+.PHONY: uninstall-user
+uninstall-user: ## Remove user installation
+	@echo "Uninstalling Pomodoro Timer for current user..."
+	rm -f ~/.local/bin/$(APP_NAME)
+	rm -f ~/.local/share/applications/pomodoro-timer.desktop
+	rm -f ~/.local/share/icons/hicolor/scalable/apps/pomodoro-timer.svg
+	@which update-desktop-database > /dev/null 2>&1 && update-desktop-database ~/.local/share/applications || true
+	@which gtk-update-icon-cache > /dev/null 2>&1 && gtk-update-icon-cache ~/.local/share/icons/hicolor || true
+	@echo "✓ Pomodoro Timer uninstalled for current user"
+
+.PHONY: uninstall-system
+uninstall-system: ## Remove system-wide installation (requires sudo)
+	@echo "Uninstalling Pomodoro Timer system-wide..."
+	sudo rm -f /usr/local/bin/$(APP_NAME)
+	sudo rm -f /usr/share/applications/pomodoro-timer.desktop
+	sudo rm -f /usr/share/icons/hicolor/scalable/apps/pomodoro-timer.svg
+	@which update-desktop-database > /dev/null 2>&1 && sudo update-desktop-database /usr/share/applications || true
+	@which gtk-update-icon-cache > /dev/null 2>&1 && sudo gtk-update-icon-cache /usr/share/icons/hicolor || true
+	@echo "✓ Pomodoro Timer uninstalled system-wide"
 
 # Clean targets
 .PHONY: clean

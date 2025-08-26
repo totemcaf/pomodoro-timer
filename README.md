@@ -125,24 +125,6 @@ go build -o bin/pomodoro ./src/...
 ./bin/pomodoro
 ```
 
-### Desktop Integration
-
-To install the application with desktop integration (appears in Applications menu):
-
-```bash
-# Install for current user only (recommended)
-make install-user
-
-# Install system-wide (requires sudo)
-make install-system
-
-# Uninstall
-make uninstall-user    # Remove user installation
-make uninstall-system  # Remove system installation
-```
-
-After installation, you can find "Pomodoro Timer" in your Applications menu under Office/Productivity.
-
 ## Usage
 
 ### Main Interface
