@@ -14,7 +14,7 @@ func (p *PomodoroApp) showConfig() {
 		p.configWindow.Show()
 		return
 	}
-	
+
 	p.createConfigWindow()
 	p.configWindow.Show()
 }
@@ -24,6 +24,11 @@ func (p *PomodoroApp) createConfigWindow() {
 	p.configWindow.Resize(fyne.NewSize(400, 300))
 	p.configWindow.CenterOnScreen()
 	
+	// Set close intercept to properly handle window closing
+	p.configWindow.SetCloseIntercept(func() {
+		p.configWindow.Hide()
+	})
+
 	// Create form entries
 	workTimeEntry := widget.NewEntry()
 	workTimeEntry.SetText(fmt.Sprintf("%.0f", p.workTime.Minutes()))
@@ -33,15 +38,15 @@ func (p *PomodoroApp) createConfigWindow() {
 		}
 		return nil
 	}
-	
+
 	shortBreakEntry := widget.NewEntry()
 	shortBreakEntry.SetText(fmt.Sprintf("%.0f", p.shortBreakTime.Minutes()))
 	shortBreakEntry.Validator = workTimeEntry.Validator
-	
+
 	longBreakEntry := widget.NewEntry()
 	longBreakEntry.SetText(fmt.Sprintf("%.0f", p.longBreakTime.Minutes()))
 	longBreakEntry.Validator = workTimeEntry.Validator
-	
+
 	shortBreaksCountEntry := widget.NewEntry()
 	shortBreaksCountEntry.SetText(fmt.Sprintf("%d", p.shortBreaksBeforeLong))
 	shortBreaksCountEntry.Validator = func(text string) error {
@@ -50,7 +55,7 @@ func (p *PomodoroApp) createConfigWindow() {
 		}
 		return nil
 	}
-	
+
 	// Create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{
@@ -73,7 +78,7 @@ func (p *PomodoroApp) createConfigWindow() {
 			if count, err := fmt.Sscanf(shortBreaksCountEntry.Text, "%d", &p.shortBreaksBeforeLong); err == nil {
 				_ = count // Suppress unused variable warning
 			}
-			
+
 			// Update current timer if not running
 			if !p.isRunning {
 				if p.isWorkTime {
@@ -87,22 +92,22 @@ func (p *PomodoroApp) createConfigWindow() {
 				}
 				p.updateTimeDisplay()
 			}
-			
+
 			p.configWindow.Hide()
 		},
 		OnCancel: func() {
 			p.configWindow.Hide()
 		},
 	}
-	
+
 	// Set submit and cancel button text in Spanish
 	form.SubmitText = "Guardar"
 	form.CancelText = "Cancelar"
-	
+
 	content := container.NewVBox(
 		widget.NewLabel("Configuración del Pomodoro"),
 		form,
 	)
-	
+
 	p.configWindow.SetContent(content)
 }

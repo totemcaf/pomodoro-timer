@@ -52,6 +52,15 @@ func (p *PomodoroApp) createMainWindow() {
 	p.mainWindow = p.app.NewWindow("Pomodoro Timer")
 	p.mainWindow.Resize(fyne.NewSize(300, 200))
 	p.mainWindow.CenterOnScreen()
+	p.mainWindow.SetMaster() // Set as master window
+
+	// Close config window when main window closes
+	p.mainWindow.SetCloseIntercept(func() {
+		if p.configWindow != nil {
+			p.configWindow.Close()
+		}
+		p.mainWindow.Close()
+	})
 
 	// Create time display label
 	p.timeLabel = widget.NewLabel(p.formatTime(p.timeRemaining))
@@ -133,8 +142,6 @@ func (p *PomodoroApp) suspend() {
 		p.startBreakBtn.Enable()
 	}
 }
-
-
 
 func (p *PomodoroApp) updateTimeDisplay() {
 	fyne.Do(func() {
