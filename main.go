@@ -112,6 +112,7 @@ func (p *PomodoroApp) startWorkTime() {
 	p.startWorkBtn.Disable()
 	p.startBreakBtn.Disable()
 	p.suspendBtn.Enable()
+	p.suspendBtn.SetText("Suspender")
 
 	p.updateTimeDisplay()
 	go p.runTimer()
@@ -134,6 +135,7 @@ func (p *PomodoroApp) startBreakTime() {
 	p.startWorkBtn.Disable()
 	p.startBreakBtn.Disable()
 	p.suspendBtn.Enable()
+	p.suspendBtn.SetText("Suspender")
 
 	p.updateTimeDisplay()
 	go p.runTimer()
@@ -141,11 +143,20 @@ func (p *PomodoroApp) startBreakTime() {
 
 func (p *PomodoroApp) suspend() {
 	if p.isRunning {
+		// Suspend the timer
 		p.isPaused = true
 		p.isRunning = false
-		p.suspendBtn.Disable()
+		p.suspendBtn.SetText("Continuar")
 		p.startWorkBtn.Enable()
 		p.startBreakBtn.Enable()
+	} else if p.isPaused {
+		// Continue the timer
+		p.isPaused = false
+		p.isRunning = true
+		p.suspendBtn.SetText("Suspender")
+		p.startWorkBtn.Disable()
+		p.startBreakBtn.Disable()
+		go p.runTimer()
 	}
 }
 
