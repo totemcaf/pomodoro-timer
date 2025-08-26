@@ -137,7 +137,6 @@ func NewPomodoroApp() *PomodoroApp {
 func (p *PomodoroApp) createMainWindow() {
 	p.mainWindow = p.app.NewWindow("Pomodoro Timer")
 	p.mainWindow.Resize(fyne.NewSize(400, 140))
-	p.mainWindow.CenterOnScreen()
 	p.mainWindow.SetMaster() // Set as master window
 
 	// Close config and about windows when main window closes
