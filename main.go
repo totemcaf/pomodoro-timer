@@ -57,7 +57,14 @@ type largeTimeRenderer struct {
 
 func (r *largeTimeRenderer) Layout(size fyne.Size) {
 	r.background.Resize(size)
-	r.text.Resize(size)
+
+	// Center the text within the background
+	textSize := r.text.MinSize()
+	x := (size.Width - textSize.Width) / 2
+	y := (size.Height - textSize.Height) / 2
+
+	r.text.Move(fyne.NewPos(x, y))
+	r.text.Resize(textSize)
 }
 
 func (r *largeTimeRenderer) MinSize() fyne.Size {
@@ -124,7 +131,7 @@ func NewPomodoroApp() *PomodoroApp {
 
 func (p *PomodoroApp) createMainWindow() {
 	p.mainWindow = p.app.NewWindow("Pomodoro Timer")
-	p.mainWindow.Resize(fyne.NewSize(400, 280))
+	p.mainWindow.Resize(fyne.NewSize(400, 140))
 	p.mainWindow.CenterOnScreen()
 	p.mainWindow.SetMaster() // Set as master window
 
@@ -265,6 +272,9 @@ func (p *PomodoroApp) runTimer() {
 	for p.isRunning {
 		select {
 		case <-ticker.C:
+			if p.isPaused {
+				continue
+			}
 			p.timeRemaining -= time.Second
 			p.updateTimeDisplay()
 
