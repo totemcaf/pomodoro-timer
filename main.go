@@ -10,18 +10,23 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
-// Custom large time label using canvas.Text
+// Custom large time label using canvas.Text with background
 type LargeTimeLabel struct {
 	widget.BaseWidget
-	text *canvas.Text
+	text       *canvas.Text
+	background *canvas.Rectangle
 }
 
 func NewLargeTimeLabel(timeText string) *LargeTimeLabel {
 	label := &LargeTimeLabel{}
+
+	// Create background rectangle
+	label.background = canvas.NewRectangle(color.RGBA{0, 0, 0, 255}) // Start with black background
+
+	// Create text
 	label.text = canvas.NewText(timeText, color.RGBA{255, 255, 255, 255})
 	label.text.TextSize = 72 // Large font size
 	label.text.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
@@ -36,30 +41,38 @@ func (l *LargeTimeLabel) SetText(text string) {
 	l.text.Refresh()
 }
 
+func (l *LargeTimeLabel) SetBackgroundColor(bgColor color.Color) {
+	l.background.FillColor = bgColor
+	l.background.Refresh()
+}
+
 func (l *LargeTimeLabel) CreateRenderer() fyne.WidgetRenderer {
-	return &largeTimeRenderer{text: l.text}
+	return &largeTimeRenderer{text: l.text, background: l.background}
 }
 
 type largeTimeRenderer struct {
-	text *canvas.Text
+	text       *canvas.Text
+	background *canvas.Rectangle
 }
 
 func (r *largeTimeRenderer) Layout(size fyne.Size) {
+	r.background.Resize(size)
 	r.text.Resize(size)
 }
 
 func (r *largeTimeRenderer) MinSize() fyne.Size {
-	return fyne.NewSize(200, 80)
+	return fyne.NewSize(400, 80) // Wider minimum size to fill window width
 }
 
 func (r *largeTimeRenderer) Refresh() {
-	// Update text color based on current theme
-	r.text.Color = theme.ForegroundColor()
+	// Keep text white for better contrast on colored backgrounds
+	r.text.Color = color.RGBA{255, 255, 255, 255}
 	r.text.Refresh()
+	r.background.Refresh()
 }
 
 func (r *largeTimeRenderer) Objects() []fyne.CanvasObject {
-	return []fyne.CanvasObject{r.text}
+	return []fyne.CanvasObject{r.background, r.text}
 }
 
 func (r *largeTimeRenderer) Destroy() {
@@ -136,8 +149,7 @@ func (p *PomodoroApp) createMainWindow() {
 	p.suspendBtn.Disable()
 
 	// Create layout
-	content := container.NewVBox(
-		widget.NewCard("", "", container.NewCenter(p.timeLabel)),
+	buttonContainer := container.NewVBox(
 		container.NewGridWithColumns(2,
 			p.startWorkBtn,
 			p.suspendBtn,
@@ -146,6 +158,15 @@ func (p *PomodoroApp) createMainWindow() {
 			p.startBreakBtn,
 			p.configBtn,
 		),
+	)
+
+	// Use border container to make time label fill the width
+	content := container.NewBorder(
+		p.timeLabel,     // Top - time label fills width
+		buttonContainer, // Bottom - buttons
+		nil,             // Left
+		nil,             // Right
+		nil,             // Center
 	)
 
 	p.mainWindow.SetContent(content)
@@ -167,6 +188,9 @@ func (p *PomodoroApp) startWorkTime() {
 	p.startBreakBtn.Disable()
 	p.suspendBtn.Enable()
 	p.suspendBtn.SetText("Suspender")
+
+	// Set background to light green for work time
+	p.timeLabel.SetBackgroundColor(color.RGBA{144, 238, 144, 255}) // Light green
 
 	p.updateTimeDisplay()
 	go p.runTimer()
@@ -191,6 +215,9 @@ func (p *PomodoroApp) startBreakTime() {
 	p.suspendBtn.Enable()
 	p.suspendBtn.SetText("Suspender")
 
+	// Set background to turquoise for break time
+	p.timeLabel.SetBackgroundColor(color.RGBA{64, 224, 208, 255}) // Turquoise
+
 	p.updateTimeDisplay()
 	go p.runTimer()
 }
@@ -203,6 +230,9 @@ func (p *PomodoroApp) suspend() {
 		p.suspendBtn.SetText("Continuar")
 		p.startWorkBtn.Enable()
 		p.startBreakBtn.Enable()
+
+		// Set background to black when suspended/not running
+		p.timeLabel.SetBackgroundColor(color.RGBA{0, 0, 0, 255}) // Black
 	} else if p.isPaused {
 		// Continue the timer
 		p.isPaused = false
@@ -210,6 +240,14 @@ func (p *PomodoroApp) suspend() {
 		p.suspendBtn.SetText("Suspender")
 		p.startWorkBtn.Disable()
 		p.startBreakBtn.Disable()
+
+		// Restore appropriate color based on timer type
+		if p.isWorkTime {
+			p.timeLabel.SetBackgroundColor(color.RGBA{144, 238, 144, 255}) // Light green for work
+		} else {
+			p.timeLabel.SetBackgroundColor(color.RGBA{64, 224, 208, 255}) // Turquoise for break
+		}
+
 		go p.runTimer()
 	}
 }
