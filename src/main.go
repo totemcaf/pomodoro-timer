@@ -89,11 +89,13 @@ type PomodoroApp struct {
 	app           fyne.App
 	mainWindow    fyne.Window
 	configWindow  fyne.Window
+	aboutWindow   fyne.Window
 	timeLabel     *LargeTimeLabel
 	startWorkBtn  *widget.Button
 	suspendBtn    *widget.Button
 	startBreakBtn *widget.Button
 	configBtn     *widget.Button
+	aboutBtn      *widget.Button
 
 	// Timer state
 	isRunning     bool
@@ -135,10 +137,13 @@ func (p *PomodoroApp) createMainWindow() {
 	p.mainWindow.CenterOnScreen()
 	p.mainWindow.SetMaster() // Set as master window
 
-	// Close config window when main window closes
+	// Close config and about windows when main window closes
 	p.mainWindow.SetCloseIntercept(func() {
 		if p.configWindow != nil {
 			p.configWindow.Close()
+		}
+		if p.aboutWindow != nil {
+			p.aboutWindow.Close()
 		}
 		p.mainWindow.Close()
 	})
@@ -151,6 +156,7 @@ func (p *PomodoroApp) createMainWindow() {
 	p.suspendBtn = widget.NewButton("Suspender", p.suspend)
 	p.startBreakBtn = widget.NewButton("Iniciar tiempo de descanso", p.startBreakTime)
 	p.configBtn = widget.NewButton("Configuración", p.showConfig)
+	p.aboutBtn = widget.NewButton("Acerca de", p.showAbout)
 
 	// Initially suspend button is disabled
 	p.suspendBtn.Disable()
@@ -161,9 +167,10 @@ func (p *PomodoroApp) createMainWindow() {
 			p.startWorkBtn,
 			p.suspendBtn,
 		),
-		container.NewGridWithColumns(2,
+		container.NewGridWithColumns(3,
 			p.startBreakBtn,
 			p.configBtn,
+			p.aboutBtn,
 		),
 	)
 
