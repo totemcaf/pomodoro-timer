@@ -134,10 +134,7 @@ func (p *PomodoroApp) suspend() {
 	}
 }
 
-func (p *PomodoroApp) showConfig() {
-	// This will be implemented in the next step
-	fmt.Println("Configuration window - to be implemented")
-}
+
 
 func (p *PomodoroApp) updateTimeDisplay() {
 	fyne.Do(func() {
@@ -179,7 +176,7 @@ func (p *PomodoroApp) timerFinished() {
 				p.mainWindow.Canvas(),
 			)
 			popup.Show()
-			
+
 			// Auto start break after showing popup
 			go func() {
 				time.Sleep(2 * time.Second)
@@ -195,7 +192,7 @@ func (p *PomodoroApp) timerFinished() {
 				p.mainWindow.Canvas(),
 			)
 			popup.Show()
-			
+
 			// Auto start work after showing popup
 			go func() {
 				time.Sleep(2 * time.Second)
