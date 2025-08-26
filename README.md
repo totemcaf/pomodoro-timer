@@ -1,5 +1,13 @@
 # Pomodoro Timer
 
+<style>
+.small-svg { width: 50%; height: 50%; }
+</style>
+
+<div style="text-align: center;">
+  <img src="./assets/pomodoro-timer.svg" class="small-svg" alt="Pomodoro Timer">
+</div>
+
 A simple and elegant GUI Pomodoro Timer application for Linux built with Go and Fyne.
 
 ## Features
@@ -116,6 +124,24 @@ go build -o bin/pomodoro ./src/...
 # Run
 ./bin/pomodoro
 ```
+
+### Desktop Integration
+
+To install the application with desktop integration (appears in Applications menu):
+
+```bash
+# Install for current user only (recommended)
+make install-user
+
+# Install system-wide (requires sudo)
+make install-system
+
+# Uninstall
+make uninstall-user    # Remove user installation
+make uninstall-system  # Remove system installation
+```
+
+After installation, you can find "Pomodoro Timer" in your Applications menu under Office/Productivity.
 
 ## Usage
 

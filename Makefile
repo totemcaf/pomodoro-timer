@@ -113,6 +113,22 @@ install: build ## Install the application to GOPATH/bin
 	$(GO_CMD) install ./$(SRC_DIR)/...
 	@echo "✓ Application installed"
 
+.PHONY: install-system
+install-system: build ## Install system-wide with desktop integration (requires sudo)
+	./install.sh install-system
+
+.PHONY: install-user
+install-user: build ## Install for current user with desktop integration
+	./install.sh install-user
+
+.PHONY: uninstall-system
+uninstall-system: ## Remove system-wide installation
+	./install.sh uninstall-system
+
+.PHONY: uninstall-user
+uninstall-user: ## Remove user installation
+	./install.sh uninstall-user
+
 .PHONY: install-deps
 install-deps: ## Install development dependencies
 	$(GO_GET) -u golang.org/x/tools/cmd/goimports
