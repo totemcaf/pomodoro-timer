@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -11,6 +12,8 @@ import (
 
 func (p *PomodoroApp) showConfig() {
 	if p.configWindow != nil {
+		// Refresh values to current configuration before showing
+		p.refreshConfigValues()
 		p.configWindow.Show()
 		return
 	}
@@ -23,34 +26,34 @@ func (p *PomodoroApp) createConfigWindow() {
 	p.configWindow = p.app.NewWindow("Configuración")
 	p.configWindow.Resize(fyne.NewSize(400, 300))
 	p.configWindow.CenterOnScreen()
-	
+
 	// Set close intercept to properly handle window closing
 	p.configWindow.SetCloseIntercept(func() {
 		p.configWindow.Hide()
 	})
 
 	// Create form entries
-	workTimeEntry := widget.NewEntry()
-	workTimeEntry.SetText(fmt.Sprintf("%.0f", p.workTime.Minutes()))
-	workTimeEntry.Validator = func(text string) error {
+	p.workTimeEntry = widget.NewEntry()
+	p.workTimeEntry.SetText(fmt.Sprintf("%.0f", p.workTime.Minutes()))
+	p.workTimeEntry.Validator = func(text string) error {
 		if _, err := time.ParseDuration(text + "m"); err != nil {
 			return fmt.Errorf("Ingrese un número válido de minutos")
 		}
 		return nil
 	}
 
-	shortBreakEntry := widget.NewEntry()
-	shortBreakEntry.SetText(fmt.Sprintf("%.0f", p.shortBreakTime.Minutes()))
-	shortBreakEntry.Validator = workTimeEntry.Validator
+	p.shortBreakEntry = widget.NewEntry()
+	p.shortBreakEntry.SetText(fmt.Sprintf("%.0f", p.shortBreakTime.Minutes()))
+	p.shortBreakEntry.Validator = p.workTimeEntry.Validator
 
-	longBreakEntry := widget.NewEntry()
-	longBreakEntry.SetText(fmt.Sprintf("%.0f", p.longBreakTime.Minutes()))
-	longBreakEntry.Validator = workTimeEntry.Validator
+	p.longBreakEntry = widget.NewEntry()
+	p.longBreakEntry.SetText(fmt.Sprintf("%.0f", p.longBreakTime.Minutes()))
+	p.longBreakEntry.Validator = p.workTimeEntry.Validator
 
-	shortBreaksCountEntry := widget.NewEntry()
-	shortBreaksCountEntry.SetText(fmt.Sprintf("%d", p.shortBreaksBeforeLong))
-	shortBreaksCountEntry.Validator = func(text string) error {
-		if _, err := fmt.Sscanf(text, "%d"); err != nil {
+	p.shortBreaksCountEntry = widget.NewEntry()
+	p.shortBreaksCountEntry.SetText(fmt.Sprintf("%d", p.shortBreaksBeforeLong))
+	p.shortBreaksCountEntry.Validator = func(text string) error {
+		if _, err := strconv.Atoi(text); err != nil {
 			return fmt.Errorf("Ingrese un número válido")
 		}
 		return nil
@@ -59,24 +62,24 @@ func (p *PomodoroApp) createConfigWindow() {
 	// Create form
 	form := &widget.Form{
 		Items: []*widget.FormItem{
-			{Text: "Tiempo de trabajo (minutos):", Widget: workTimeEntry},
-			{Text: "Tiempo de descanso corto (minutos):", Widget: shortBreakEntry},
-			{Text: "Tiempo de descanso largo (minutos):", Widget: longBreakEntry},
-			{Text: "Descansos cortos antes del largo:", Widget: shortBreaksCountEntry},
+			{Text: "Tiempo de trabajo (minutos):", Widget: p.workTimeEntry},
+			{Text: "Tiempo de descanso corto (minutos):", Widget: p.shortBreakEntry},
+			{Text: "Tiempo de descanso largo (minutos):", Widget: p.longBreakEntry},
+			{Text: "Descansos cortos antes del largo:", Widget: p.shortBreaksCountEntry},
 		},
 		OnSubmit: func() {
 			// Parse and validate all entries
-			if workTime, err := time.ParseDuration(workTimeEntry.Text + "m"); err == nil {
+			if workTime, err := time.ParseDuration(p.workTimeEntry.Text + "m"); err == nil {
 				p.workTime = workTime
 			}
-			if shortBreak, err := time.ParseDuration(shortBreakEntry.Text + "m"); err == nil {
+			if shortBreak, err := time.ParseDuration(p.shortBreakEntry.Text + "m"); err == nil {
 				p.shortBreakTime = shortBreak
 			}
-			if longBreak, err := time.ParseDuration(longBreakEntry.Text + "m"); err == nil {
+			if longBreak, err := time.ParseDuration(p.longBreakEntry.Text + "m"); err == nil {
 				p.longBreakTime = longBreak
 			}
-			if count, err := fmt.Sscanf(shortBreaksCountEntry.Text, "%d", &p.shortBreaksBeforeLong); err == nil {
-				_ = count // Suppress unused variable warning
+			if count, err := strconv.Atoi(p.shortBreaksCountEntry.Text); err == nil {
+				p.shortBreaksBeforeLong = count
 			}
 
 			// Update current timer if not running
@@ -110,4 +113,20 @@ func (p *PomodoroApp) createConfigWindow() {
 	)
 
 	p.configWindow.SetContent(content)
+}
+
+func (p *PomodoroApp) refreshConfigValues() {
+	// Update form entries with current configuration values
+	if p.workTimeEntry != nil {
+		p.workTimeEntry.SetText(fmt.Sprintf("%.0f", p.workTime.Minutes()))
+	}
+	if p.shortBreakEntry != nil {
+		p.shortBreakEntry.SetText(fmt.Sprintf("%.0f", p.shortBreakTime.Minutes()))
+	}
+	if p.longBreakEntry != nil {
+		p.longBreakEntry.SetText(fmt.Sprintf("%.0f", p.longBreakTime.Minutes()))
+	}
+	if p.shortBreaksCountEntry != nil {
+		p.shortBreaksCountEntry.SetText(fmt.Sprintf("%d", p.shortBreaksBeforeLong))
+	}
 }

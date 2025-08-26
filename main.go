@@ -32,6 +32,12 @@ type PomodoroApp struct {
 	longBreakTime         time.Duration
 	shortBreaksBeforeLong int
 	currentBreakCount     int
+
+	// Config form entries
+	workTimeEntry         *widget.Entry
+	shortBreakEntry       *widget.Entry
+	longBreakEntry        *widget.Entry
+	shortBreaksCountEntry *widget.Entry
 }
 
 func NewPomodoroApp() *PomodoroApp {
