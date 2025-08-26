@@ -4,17 +4,72 @@ import (
 	"fmt"
 	"time"
 
+	"image/color"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
+
+// Custom large time label using canvas.Text
+type LargeTimeLabel struct {
+	widget.BaseWidget
+	text *canvas.Text
+}
+
+func NewLargeTimeLabel(timeText string) *LargeTimeLabel {
+	label := &LargeTimeLabel{}
+	label.text = canvas.NewText(timeText, color.RGBA{255, 255, 255, 255})
+	label.text.TextSize = 72 // Large font size
+	label.text.TextStyle = fyne.TextStyle{Bold: true, Monospace: true}
+	label.text.Alignment = fyne.TextAlignCenter
+
+	label.ExtendBaseWidget(label)
+	return label
+}
+
+func (l *LargeTimeLabel) SetText(text string) {
+	l.text.Text = text
+	l.text.Refresh()
+}
+
+func (l *LargeTimeLabel) CreateRenderer() fyne.WidgetRenderer {
+	return &largeTimeRenderer{text: l.text}
+}
+
+type largeTimeRenderer struct {
+	text *canvas.Text
+}
+
+func (r *largeTimeRenderer) Layout(size fyne.Size) {
+	r.text.Resize(size)
+}
+
+func (r *largeTimeRenderer) MinSize() fyne.Size {
+	return fyne.NewSize(200, 80)
+}
+
+func (r *largeTimeRenderer) Refresh() {
+	// Update text color based on current theme
+	r.text.Color = theme.ForegroundColor()
+	r.text.Refresh()
+}
+
+func (r *largeTimeRenderer) Objects() []fyne.CanvasObject {
+	return []fyne.CanvasObject{r.text}
+}
+
+func (r *largeTimeRenderer) Destroy() {
+}
 
 type PomodoroApp struct {
 	app           fyne.App
 	mainWindow    fyne.Window
 	configWindow  fyne.Window
-	timeLabel     *widget.Label
+	timeLabel     *LargeTimeLabel
 	startWorkBtn  *widget.Button
 	suspendBtn    *widget.Button
 	startBreakBtn *widget.Button
@@ -56,7 +111,7 @@ func NewPomodoroApp() *PomodoroApp {
 
 func (p *PomodoroApp) createMainWindow() {
 	p.mainWindow = p.app.NewWindow("Pomodoro Timer")
-	p.mainWindow.Resize(fyne.NewSize(300, 200))
+	p.mainWindow.Resize(fyne.NewSize(400, 280))
 	p.mainWindow.CenterOnScreen()
 	p.mainWindow.SetMaster() // Set as master window
 
@@ -68,9 +123,8 @@ func (p *PomodoroApp) createMainWindow() {
 		p.mainWindow.Close()
 	})
 
-	// Create time display label
-	p.timeLabel = widget.NewLabel(p.formatTime(p.timeRemaining))
-	p.timeLabel.TextStyle.Bold = true
+	// Create time display label with large font
+	p.timeLabel = NewLargeTimeLabel(p.formatTime(p.timeRemaining))
 
 	// Create buttons
 	p.startWorkBtn = widget.NewButton("Iniciar tiempo de trabajo", p.startWorkTime)
